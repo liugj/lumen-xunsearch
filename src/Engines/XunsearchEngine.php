@@ -42,7 +42,9 @@ class XunsearchEngine extends Engine
                 return;
             }
 
-            $index->update(array_merge(['id' => $model->getKey()], $array));
+            $doc = new \XSDocument();
+            $doc->setFields(array_merge(['id' => $model->getKey()], $array));
+            $index->update($doc);
         });
 
         $index->flushIndex();

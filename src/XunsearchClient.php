@@ -58,7 +58,7 @@ class XunsearchClient
         if (isset($this->_index[$indexName])) {
             return $this->_index[$indexName];
         } else {
-            $this->loadIniFile(config('scout.schema.'. $indexName));
+            $this->loadIniFile(config('scout.xunsearch.schema.'. $indexName));
             $adds = array();
             $conn = isset($this->_config['server.index']) ? $this->_config['server.index'] : 8383;
             if (($pos = strpos($conn, ';')) !== false) {
@@ -66,7 +66,7 @@ class XunsearchClient
                 $conn = substr($conn, 0, $pos);
             }
             $this->_index[$indexName] = new \XSIndex($conn, $this);
-            $this->_index[$indexName]->setProject($searchName);
+            $this->_index[$indexName]->setProject($indexName);
             $this->_index[$indexName]->setTimeout(0);
             foreach ($adds as $conn) {
                 $conn = trim($conn);
@@ -191,7 +191,7 @@ class XunsearchClient
 		if (isset($this->_search[$searchName])) {
             return $this->_search[$searchName];
         } else {
-            $this->loadIniFile(config('scout.schema.'. $indexName));
+            $this->loadIniFile(config('scout.xunsearch.schema.'. $indexName));
 			$conns = array();
 			if (!isset($this->_config['server.search'])) {
 				$conns[] = 8384;
@@ -208,7 +208,7 @@ class XunsearchClient
 			}
 			for ($i = 0; $i < count($conns); $i++) {
 				try {
-					$this->_search[$searchName] = new XSSearch($conns[$i], $this);
+					$this->_search[$searchName] = new \XSSearch($conns[$i], $this);
                     $this->_search[$searchName]->setProject($searchName);
 					$this->_search[$searchName]->setCharset($this->getDefaultCharset());
 					return $this->_search[$searchName];
@@ -404,22 +404,23 @@ class XunsearchClient
         if (($data = Cache ::get($key)) !== null) {
             if ($data['mtime'] != $mtime) {
                 $data = false;
-            }else {
-                $this->_config = $data['config'];
             }
         } 
+
+        $data = false;
         if (!$data) {
-            $data['config'] = $this->_config = $this->parseIniData($file);
+            $content = file_get_contents($file);
+            $data['config'] =  $this->parseIniData($content);
             $data['mtime']  = $mtime; 
             if ($this->_config === false) {
-                throw new XSException('Failed to parse project config file/string: \'' . substr($file, 0, 10) . '...\'');
+                throw new \XSException('Failed to parse project config file/string: \'' . substr($file, 0, 10) . '...\'');
             }
-
             Cache :: put ($key, $data, 86400);
         }
+        $this->_config = array_merge($this->_config, $data['config']);
 
         // create the scheme object
-        $scheme = new XSFieldScheme;
+        $scheme = new \XSFieldScheme;
         foreach ($this->_config as $key => $value) {
             if (is_array($value)) {
                 $scheme->addField($key, $value);
@@ -428,9 +429,9 @@ class XunsearchClient
         $scheme->checkValid(true);
 
         // load default config
-        //if (!isset($this->_config['project.name'])) {
-        //	$this->_config['project.name'] = basename($file, '.ini');
-        //}
+        if (!isset($this->_config['project.name'])) {
+        	$this->_config['project.name'] = basename($file, '.ini');
+        }
 
         //// save to cache
         $this->_scheme = $this->_bindScheme = $scheme;
