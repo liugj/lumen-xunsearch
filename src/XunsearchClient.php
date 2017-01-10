@@ -1,7 +1,6 @@
 <?php 
 namespace Liugj\Xunsearch;
 
-
 class XunsearchClient
 {
 	/**
@@ -38,8 +37,42 @@ class XunsearchClient
 	 */
 	public function __construct($indexHost, $searchHost)
 	{
+        $this->_config['server.index']  = $indexHost;
+        $this->_config['server.search'] = $searchHost;
 		self::$_lastXS = $this;
 	}
+    /**
+     * initIndex 
+     * 
+     * @param string $index
+     * 
+     * @access public
+     * 
+     * @return mixed
+     */
+    public function initIndex(string $index) 
+    {
+        if (isset($this->_index[$index])) {
+            return $this->_index[$index];
+        } else {
+            $adds = array();
+            $conn = isset($this->_config['server.index']) ? $this->_config['server.index'] : 8383;
+            if (($pos = strpos($conn, ';')) !== false) {
+                $adds = explode(';', substr($conn, $pos + 1));
+                $conn = substr($conn, 0, $pos);
+            }
+            $this->_index = new \XSIndex($conn, $this);
+            $this->_index->setTimeout(0);
+            foreach ($adds as $conn) {
+                $conn = trim($conn);
+                if ($conn !== '') {
+                    $this->_index->addServer($conn)->setTimeout(0);
+                }
+            }
+        }
+
+        return $this->_index[$index];
+    }
 
 	/**
 	 * 析构函数

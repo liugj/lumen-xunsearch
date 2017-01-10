@@ -22,13 +22,10 @@ class XunsearchServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->publishes([
-                __DIR__.'/config/scout.php' => config('scout.php'),
-        ], 'config');
-
+        $this->app->configure('scout');
         $this->app->singleton(EngineManager::class, function ($app) {
-                return (new EngineManager($app))->extend('xunSearch', function ($app) {
-                        return XunsearchEngine(new XunsearchClient(
+                return (new EngineManager($app))->extend('xunsearch', function ($app) {
+                        return new XunsearchEngine(new XunsearchClient(
                             config('scout.xunsearch.index'),
                             config('scout.xunsearch.search')
                         ));
