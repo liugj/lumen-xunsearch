@@ -35,15 +35,17 @@ class XunsearchEngine extends Engine
     {
         $index = $this->xunsearch->initIndex($models->first()->searchableAs());
 
-        $index->addObjects($models->map(function ($model) {
+        $models->map(function ($model) use ($index) {
             $array = $model->toSearchableArray();
 
             if (empty($array)) {
                 return;
             }
 
-            return array_merge(['objectID' => $model->getKey()], $array);
-        })->filter()->values()->all());
+            $index->update(array_merge(['id' => $model->getKey()], $array));
+        });
+
+        $index->flushIndex();
     }
 
     /**
@@ -56,11 +58,11 @@ class XunsearchEngine extends Engine
     {
         $index = $this->xunsearch->initIndex($models->first()->searchableAs());
 
-        $index->deleteObjects(
-            $models->map(function ($model) {
-                return $model->getKey();
-            })->values()->all()
-        );
+        $models->map(function ($model) use ($index) {
+                $index->del($model->getKey());
+        });
+
+        $index->flushIndex();
     }
 
     /**
@@ -103,20 +105,31 @@ class XunsearchEngine extends Engine
      */
     protected function performSearch(Builder $builder, array $options = [])
     {
-        $xunsearch = $this->xunsearch->initIndex(
+        $search = $this->xunsearch->initSearch(
             $builder->index ?: $builder->model->searchableAs()
         );
 
         if ($builder->callback) {
             return call_user_func(
                 $builder->callback,
-                $xunsearch,
+                $search,
                 $builder->query,
                 $options
             );
         }
 
-        return $xunsearch->search($builder->query, $options);
+        $search->setFuzzy()->setQuery($builder->query);
+        collect($builder->wheres)->map(function ($value, $key) use ($search) {
+            $search->addRange($key, $value, $value);
+        });
+
+        $offset = 0;
+        $perPage = $options['hitsPerPage'];
+        if (!empty($options['page'])) {
+            $offset = $perPage * $options['page'];
+        }
+
+        return $search->setLimit($perPage, $offset)->search();
     }
 
     /**
@@ -140,7 +153,7 @@ class XunsearchEngine extends Engine
      */
     public function mapIds($results)
     {
-        return collect($results['hits'])->pluck('objectID')->values();
+        return collect($results['hits'])->pluck('id')->values();
     }
 
     /**
@@ -157,7 +170,7 @@ class XunsearchEngine extends Engine
         }
 
         $keys = collect($results['hits'])
-                        ->pluck('objectID')->values()->all();
+                        ->pluck($model->getKeyName())->values()->all();
 
         $models = $model->whereIn(
             $model->getQualifiedKeyName(),
@@ -165,7 +178,7 @@ class XunsearchEngine extends Engine
         )->get()->keyBy($model->getKeyName());
 
         return Collection::make($results['hits'])->map(function ($hit) use ($model, $models) {
-            $key = $hit['objectID'];
+            $key = $hit[$model->getKeyName()];
 
             if (isset($models[$key])) {
                 return $models[$key];

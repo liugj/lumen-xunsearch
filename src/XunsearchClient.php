@@ -1,6 +1,8 @@
 <?php 
 namespace Liugj\Xunsearch;
 
+use Cache;
+
 class XunsearchClient
 {
 	/**
@@ -44,34 +46,37 @@ class XunsearchClient
     /**
      * initIndex 
      * 
-     * @param string $index
+     * @param string $indexName
      * 
      * @access public
      * 
      * @return mixed
      */
-    public function initIndex(string $index) 
+    public function initIndex(string $indexName) 
     {
-        if (isset($this->_index[$index])) {
-            return $this->_index[$index];
+        $this->setName($indexName);
+        if (isset($this->_index[$indexName])) {
+            return $this->_index[$indexName];
         } else {
+            $this->loadIniFile(config('scout.schema.'. $indexName));
             $adds = array();
             $conn = isset($this->_config['server.index']) ? $this->_config['server.index'] : 8383;
             if (($pos = strpos($conn, ';')) !== false) {
                 $adds = explode(';', substr($conn, $pos + 1));
                 $conn = substr($conn, 0, $pos);
             }
-            $this->_index = new \XSIndex($conn, $this);
-            $this->_index->setTimeout(0);
+            $this->_index[$indexName] = new \XSIndex($conn, $this);
+            $this->_index[$indexName]->setProject($searchName);
+            $this->_index[$indexName]->setTimeout(0);
             foreach ($adds as $conn) {
                 $conn = trim($conn);
                 if ($conn !== '') {
-                    $this->_index->addServer($conn)->setTimeout(0);
+                    $this->_index[$indexName]->addServer($conn)->setTimeout(0);
                 }
             }
         }
 
-        return $this->_index[$index];
+        return $this->_index[$indexName];
     }
 
 	/**
@@ -108,27 +113,27 @@ class XunsearchClient
 	 * @param XSFieldScheme $fs 一个有效的字段方案对象
 	 * @throw XSException 无效方案则直接抛出异常
 	 */
-	public function setScheme(XSFieldScheme $fs)
-	{
-		$fs->checkValid(true);
-		$this->_scheme = $fs;
-		if ($this->_search !== null) {
-			$this->_search->markResetScheme();
-		}
-	}
+	//public function setScheme(XSFieldScheme $fs)
+	//{
+	//	$fs->checkValid(true);
+	//	$this->_scheme = $fs;
+	//	if ($this->_search !== null) {
+	//		$this->_search->markResetScheme();
+	//	}
+	//}
 
 	/**
 	 * 还原字段方案为项目绑定方案
 	 */
-	public function restoreScheme()
-	{
-		if ($this->_scheme !== $this->_bindScheme) {
-			$this->_scheme = $this->_bindScheme;
-			if ($this->_search !== null) {
-				$this->_search->markResetScheme(true);
-			}
-		}
-	}
+	//public function restoreScheme()
+	//{
+	//	if ($this->_scheme !== $this->_bindScheme) {
+	//		$this->_scheme = $this->_bindScheme;
+	//		if ($this->_search !== null) {
+	//			$this->_search->markResetScheme(true);
+	//		}
+	//	}
+	//}
 
 	/**
 	 * @return array 获取配置原始数据
@@ -177,37 +182,16 @@ class XunsearchClient
 	}
 
 	/**
-	 * 获取索引操作对象
-	 * @return XSIndex 索引操作对象
-	 */
-	public function getIndex()
-	{
-		if ($this->_index === null) {
-			$adds = array();
-			$conn = isset($this->_config['server.index']) ? $this->_config['server.index'] : 8383;
-			if (($pos = strpos($conn, ';')) !== false) {
-				$adds = explode(';', substr($conn, $pos + 1));
-				$conn = substr($conn, 0, $pos);
-			}
-			$this->_index = new XSIndex($conn, $this);
-			$this->_index->setTimeout(0);
-			foreach ($adds as $conn) {
-				$conn = trim($conn);
-				if ($conn !== '') {
-					$this->_index->addServer($conn)->setTimeout(0);
-				}
-			}
-		}
-		return $this->_index;
-	}
-
-	/**
 	 * 获取搜索操作对象
 	 * @return XSSearch 搜索操作对象
 	 */
-	public function getSearch()
+	public function initSearch($searchName)
 	{
-		if ($this->_search === null) {
+        $this->setName($searchName);
+		if (isset($this->_search[$searchName])) {
+            return $this->_search[$searchName];
+        } else {
+            $this->loadIniFile(config('scout.schema.'. $indexName));
 			$conns = array();
 			if (!isset($this->_config['server.search'])) {
 				$conns[] = 8384;
@@ -224,9 +208,10 @@ class XunsearchClient
 			}
 			for ($i = 0; $i < count($conns); $i++) {
 				try {
-					$this->_search = new XSSearch($conns[$i], $this);
-					$this->_search->setCharset($this->getDefaultCharset());
-					return $this->_search;
+					$this->_search[$searchName] = new XSSearch($conns[$i], $this);
+                    $this->_search[$searchName]->setProject($searchName);
+					$this->_search[$searchName]->setCharset($this->getDefaultCharset());
+					return $this->_search[$searchName];
 				} catch (XSException $e) {
 					if (($i + 1) === count($conns)) {
 						throw $e;
@@ -234,7 +219,8 @@ class XunsearchClient
 				}
 			}
 		}
-		return $this->_search;
+
+		return $this->_search[$searchName];
 	}
 
 	/**
@@ -411,63 +397,42 @@ class XunsearchClient
 	 * @see XSFieldMeta::fromConfig
 	 */
 	private function loadIniFile($file)
-	{
-		// check cache
-		$cache = false;
-		$cache_write = '';
-		if (strlen($file) < 255 && file_exists($file)) {
-			$cache_key = md5(__CLASS__ . '::ini::' . realpath($file));
-			if (function_exists('apc_fetch')) {
-				$cache = apc_fetch($cache_key);
-				$cache_write = 'apc_store';
-			} elseif (function_exists('xcache_get') && php_sapi_name() !== 'cli') {
-				$cache = xcache_get($cache_key);
-				$cache_write = 'xcache_set';
-			} elseif (function_exists('eaccelerator_get')) {
-				$cache = eaccelerator_get($cache_key);
-				$cache_write = 'eaccelerator_put';
-			}
-			if ($cache && isset($cache['mtime']) && isset($cache['scheme'])
-				&& filemtime($file) <= $cache['mtime']) {
-				// cache HIT
-				$this->_scheme = $this->_bindScheme = unserialize($cache['scheme']);
-				$this->_config = $cache['config'];
-				return;
-			}
-			$data = file_get_contents($file);
-		} else {
-			// parse ini string
-			$data = $file;
-			$file = substr(md5($file), 8, 8) . '.ini';
-		}
+    {
+        // parse ini file
+        $key = 'xunsearch_'. md5($file);
+        $mtime = filemtime($file);
+        if (($data = Cache ::get($key)) !== null) {
+            if ($data['mtime'] != $mtime) {
+                $data = false;
+            }else {
+                $this->_config = $data['config'];
+            }
+        } 
+        if (!$data) {
+            $data['config'] = $this->_config = $this->parseIniData($file);
+            $data['mtime']  = $mtime; 
+            if ($this->_config === false) {
+                throw new XSException('Failed to parse project config file/string: \'' . substr($file, 0, 10) . '...\'');
+            }
 
-		// parse ini file
-		$this->_config = $this->parseIniData($data);
-		if ($this->_config === false) {
-			throw new XSException('Failed to parse project config file/string: \'' . substr($file, 0, 10) . '...\'');
-		}
+            Cache :: put ($key, $data, 86400);
+        }
 
-		// create the scheme object
-		$scheme = new XSFieldScheme;
-		foreach ($this->_config as $key => $value) {
-			if (is_array($value)) {
-				$scheme->addField($key, $value);
-			}
-		}
-		$scheme->checkValid(true);
+        // create the scheme object
+        $scheme = new XSFieldScheme;
+        foreach ($this->_config as $key => $value) {
+            if (is_array($value)) {
+                $scheme->addField($key, $value);
+            }
+        }
+        $scheme->checkValid(true);
 
-		// load default config
-		if (!isset($this->_config['project.name'])) {
-			$this->_config['project.name'] = basename($file, '.ini');
-		}
+        // load default config
+        //if (!isset($this->_config['project.name'])) {
+        //	$this->_config['project.name'] = basename($file, '.ini');
+        //}
 
-		// save to cache
-		$this->_scheme = $this->_bindScheme = $scheme;
-		if ($cache_write != '') {
-			$cache['mtime'] = filemtime($file);
-			$cache['scheme'] = serialize($this->_scheme);
-			$cache['config'] = $this->_config;
-			call_user_func($cache_write, $cache_key, $cache);
-		}
-	}
+        //// save to cache
+        $this->_scheme = $this->_bindScheme = $scheme;
+    }
 }
