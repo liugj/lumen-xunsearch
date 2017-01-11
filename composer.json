@@ -10,13 +10,13 @@
     ],
     "require": {
         "php": ">=5.6.4",
-        "laravel/scout": "~2",
-        "hightman/xunsearch": "~1"
+        "laravel/scout": "~2"
     },
     "autoload": {
         "psr-4": {
             "Liugj\\Xunsearch\\": "src/"
-        }
+        },
+        "classmap": ["sdk"]
     },
     "license": "MIT",
     "minimum-stability": "stable",
