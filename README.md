@@ -1,12 +1,6 @@
 Lumen XunSearch
 ==============
 
-[![Latest Stable Version](https://poser.pugx.org/liugj/lumen-xunsearch/version)](https://packagist.org/packages/liugj/lumen-xunsearch)
-[![Latest Unstable Version](https://poser.pugx.org/liugj/lumen-xunsearch/v/unstable.png)](https://packagist.org/packages/liugj/lumen-xunsearch)
-[![License](https://poser.pugx.org/liugj/lumen-xunsearch/license)](https://packagist.org/packages/liugj/lumen-xunsearch)
-[![Total Downloads](https://poser.pugx.org/liugj/lumen-xunsearch/downloads)](https://packagist.org/packages/liugj/lumen-xunsearch)
-[![composer.lock available](https://poser.pugx.org/liugj/lumen-xunsearch/composerlock)](https://packagist.org/packages/liugj/lumen-xunsearch)
-
 Xunsearch Driver for Laravel Scout.
 
 ## Installation
