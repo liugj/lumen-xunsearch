@@ -53,11 +53,11 @@ class XunsearchClient
 
     /**
      * 获取搜索操作对象
-     * 
-     * @param string $searchName 
-     * 
+     *
+     * @param string $searchName
+     *
      * @access public
-     * 
+     *
      * @return XSSearch 搜索操作对象
      */
     public function initSearch(string $searchName)
@@ -108,9 +108,9 @@ class XunsearchClient
      * 加载项目配置文件
      *
      * @param string $schema 索引名称
-     * 
+     *
      * @access private
-     * 
+     *
      * @return array
      */
     private function loadConfig($schema)

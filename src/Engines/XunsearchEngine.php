@@ -20,7 +20,7 @@ class XunsearchEngine extends Engine
     /**
      * Create a new engine instance.
      *
-     * @param Xunsearch $xunsearch 
+     * @param Xunsearch $xunsearch
      *
      * @return void
      */
