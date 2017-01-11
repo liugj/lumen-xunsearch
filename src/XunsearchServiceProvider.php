@@ -26,8 +26,9 @@ class XunsearchServiceProvider extends ServiceProvider
         $this->app->singleton(EngineManager::class, function ($app) {
                 return (new EngineManager($app))->extend('xunsearch', function ($app) {
                         return new XunsearchEngine(new XunsearchClient(
-                            config('scout.xunsearch.index'),
-                            config('scout.xunsearch.search')
+                            $app['config']['scout.xunsearch.index'],
+                            $app['config']['scout.xunsearch.search'],
+                            ['schema' => $app['config']['scout.xunsearch.schema']]
                         ));
                 });
         });

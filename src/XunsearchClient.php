@@ -22,6 +22,14 @@ class XunsearchClient
     protected $searchHost = null;
 
     /**
+     * options 
+     * 
+     * @var mixed
+     * @access protected
+     */
+    protected $options = [];
+
+    /**
      * __construct
      *
      * @param mixed $indexHost
@@ -31,10 +39,11 @@ class XunsearchClient
      *
      * @return mixed
      */
-    public function __construct($indexHost, $searchHost)
+    public function __construct($indexHost, $searchHost, $options = [])
     {
         $this->indexHost  = $indexHost;
         $this->searchHost = $searchHost;
+        $this->options    = $options;
     }
     /**
      * 初始化索引参数 initIndex
@@ -115,7 +124,7 @@ class XunsearchClient
      */
     private function loadConfig($schema)
     {
-        $file = config('scout.xunsearch.schema.'. $schema);
+        $file = $this->options['schema'][$schema];
         $key = 'xunsearch_'. md5($file);
         $mtime = filemtime($file);
 
