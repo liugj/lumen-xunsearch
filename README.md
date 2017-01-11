@@ -23,7 +23,6 @@ You must add the Scout service provider and the package service provider in your
 $app->register(Liugj\Xunsearch\XunsearchServiceProvider::class);
 ```
 
-
 ## Configuration 
 
 Publish the config file into your project by edit `config/scout.php` line 62:
