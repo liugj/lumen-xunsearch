@@ -14,9 +14,13 @@ class XunsearchEngine extends Engine
      *
      * @var Liugj\Xunsearch\XunSearchClient
      */
+
     protected $xunsearch;
+
     /**
      * Create a new engine instance.
+     *
+     * @param Xunsearch $xunsearch 
      *
      * @return void
      */
@@ -28,7 +32,9 @@ class XunsearchEngine extends Engine
      * Update the given model in the index.
      *
      * @param  \Illuminate\Database\Eloquent\Collection  $models
+     *
      * @throws \XSException
+     *
      * @return void
      */
     public function update($models)
@@ -54,6 +60,9 @@ class XunsearchEngine extends Engine
      * Remove the given model from the index.
      *
      * @param  \Illuminate\Database\Eloquent\Collection  $models
+     *
+     * @throws \XSException
+     *
      * @return void
      */
     public function delete($models)
@@ -71,6 +80,7 @@ class XunsearchEngine extends Engine
      * Perform the given search on the engine.
      *
      * @param  \Laravel\Scout\Builder  $builder
+     *
      * @return mixed
      */
     public function search(Builder $builder)
@@ -85,8 +95,9 @@ class XunsearchEngine extends Engine
      * Perform the given search on the engine.
      *
      * @param  \Laravel\Scout\Builder  $builder
-     * @param  int  $perPage
-     * @param  int  $page
+     * @param  int                     $perPage
+     * @param  int                     $page
+     *
      * @return mixed
      */
     public function paginate(Builder $builder, $perPage, $page)
@@ -102,7 +113,8 @@ class XunsearchEngine extends Engine
      * Perform the given search on the engine.
      *
      * @param  \Laravel\Scout\Builder  $builder
-     * @param  array  $options
+     * @param  array                   $options
+     *
      * @return mixed
      */
     protected function performSearch(Builder $builder, array $options = [])
@@ -131,6 +143,7 @@ class XunsearchEngine extends Engine
         }
 
         $hits =  $search->setLimit($perPage, $offset)->search();
+
         return ['hits'=>$hits, 'nbHits'=>$search->lastCount];
     }
 
@@ -138,6 +151,7 @@ class XunsearchEngine extends Engine
      * Get the filter array for the query.
      *
      * @param  \Laravel\Scout\Builder  $builder
+     *
      * @return array
      */
     protected function filters(Builder $builder)
@@ -151,6 +165,7 @@ class XunsearchEngine extends Engine
      * Pluck and return the primary keys of the given results.
      *
      * @param  mixed  $results
+     *
      * @return \Illuminate\Support\Collection
      */
     public function mapIds($results)
@@ -161,8 +176,9 @@ class XunsearchEngine extends Engine
     /**
      * Map the given results to instances of the given model.
      *
-     * @param  mixed  $results
+     * @param  mixed                                $results
      * @param  \Illuminate\Database\Eloquent\Model  $model
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function map($results, $model)
@@ -196,6 +212,7 @@ class XunsearchEngine extends Engine
      * Get the total count from a raw result returned by the engine.
      *
      * @param  mixed  $results
+     *
      * @return int
      */
     public function getTotalCount($results)

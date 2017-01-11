@@ -12,6 +12,7 @@ class XunsearchClient
      * @access protected
      */
     protected $indexHost = null;
+
     /**
      * searchHost
      *
@@ -19,6 +20,7 @@ class XunsearchClient
      * @access protected
      */
     protected $searchHost = null;
+
     /**
      * __construct
      *
@@ -35,13 +37,13 @@ class XunsearchClient
         $this->searchHost = $searchHost;
     }
     /**
-     * initIndex
+     * 初始化索引参数 initIndex
      *
      * @param string $indexName
      *
      * @access public
      *
-     * @return mixed
+     * @return \XSIndex
      */
     public function initIndex(string $indexName)
     {
@@ -51,17 +53,25 @@ class XunsearchClient
 
     /**
      * 获取搜索操作对象
+     * 
+     * @param string $searchName 
+     * 
+     * @access public
+     * 
      * @return XSSearch 搜索操作对象
      */
-    public function initSearch($searchName)
+    public function initSearch(string $searchName)
     {
         $config  = $this->loadConfig($searchName);
         return  (new \XS($config))->getSearch();
     }
+
     /**
      * 解析INI配置文件
      * 由于 PHP 自带的 parse_ini_file 存在一些不兼容，故自行简易实现
+     *
      * @param string $data 文件内容
+     *
      * @return array 解析后的结果
      */
     private function parseIniData($data)
@@ -96,7 +106,12 @@ class XunsearchClient
 
     /**
      * 加载项目配置文件
-     * @param string $file 配置文件路径
+     *
+     * @param string $schema 索引名称
+     * 
+     * @access private
+     * 
+     * @return array
      */
     private function loadConfig($schema)
     {
