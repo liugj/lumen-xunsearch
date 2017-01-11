@@ -14,14 +14,14 @@ Xunsearch Driver for Laravel Scout.
 You can install the package via composer:
 
 ```bash
-composer require nicolasliu/laravel-xunsearch
+composer require liugj/lumen-xunsearch
 ```
 
 You must add the Scout service provider and the package service provider in your `app.php` config:
 
 ```php
 'providers' => [
-	Nicolasliu\Xunsearch\XunsearchServiceProvider::class,
+	Liugj\Xunsearch\XunsearchServiceProvider::class,
 ],
 ```
 
@@ -37,9 +37,9 @@ php artisan vendor:publish --provider="Nicolasliu\Xunsearch\XunsearchServiceProv
 Add Xunsearch settings into `.env` file:
 
 ```
-XUNSEARCH_HOST=127.0.0.1
-XUNSEARCH_SEARCHPORT=8384
-XUNSEARCH_INDEXPORT=8383
+SCOUT_DRIVER=xunsearch
+XUNSEARCH_INDEX_HOST=172.16.76.233:8383
+XUNSEARCH_SEARCH_HOST=172.16.76.233:8384
 ```
 
 ## Usage
