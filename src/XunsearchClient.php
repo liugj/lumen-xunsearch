@@ -99,8 +99,9 @@ class XunsearchClient
 	 * 加载项目配置文件
 	 * @param string $file 配置文件路径
 	 */
-	private function loadConfig($file)
+	private function loadConfig($schema)
     {
+        $file = config('scout.xunsearch.schema.'. $schema);
         $key = 'xunsearch_'. md5($file);
         $mtime = filemtime($file);
         if (($data = Cache ::get($key)) !== null) {
@@ -116,8 +117,8 @@ class XunsearchClient
             Cache :: put ($key, $data, 86400);
         }
 
-        $data['config']['project.search'] = $this->searchHost;
-        $data['config']['project.index']  = $this->indexHost;
+        $data['config']['server.search'] = $this->searchHost;
+        $data['config']['server.index']  = $this->indexHost;
         $data['config']['project.default_charset'] = 'utf8';
         return $data['config'];
     }
