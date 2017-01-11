@@ -1,11 +1,11 @@
-Laravel XunSearch
+Lumen XunSearch
 ==============
 
-[![Latest Stable Version](https://poser.pugx.org/nicolasliu/laravel-xunsearch/version)](https://packagist.org/packages/nicolasliu/laravel-xunsearch)
-[![Latest Unstable Version](https://poser.pugx.org/nicolasliu/laravel-xunsearch/v/unstable.png)](https://packagist.org/packages/nicolasliu/laravel-xunsearch)
-[![License](https://poser.pugx.org/nicolasliu/laravel-xunsearch/license)](https://packagist.org/packages/nicolasliu/laravel-xunsearch)
-[![Total Downloads](https://poser.pugx.org/nicolasliu/laravel-xunsearch/downloads)](https://packagist.org/packages/nicolasliu/laravel-xunsearch)
-[![composer.lock available](https://poser.pugx.org/nicolasliu/laravel-xunsearch/composerlock)](https://packagist.org/packages/nicolasliu/laravel-xunsearch)
+[![Latest Stable Version](https://poser.pugx.org/liugj/lumen-xunsearch/version)](https://packagist.org/packages/liugj/lumen-xunsearch)
+[![Latest Unstable Version](https://poser.pugx.org/liugj/lumen-xunsearch/v/unstable.png)](https://packagist.org/packages/liugj/lumen-xunsearch)
+[![License](https://poser.pugx.org/liugj/lumen-xunsearch/license)](https://packagist.org/packages/liugj/lumen-xunsearch)
+[![Total Downloads](https://poser.pugx.org/liugj/lumen-xunsearch/downloads)](https://packagist.org/packages/liugj/lumen-xunsearch)
+[![composer.lock available](https://poser.pugx.org/liugj/lumen-xunsearch/composerlock)](https://packagist.org/packages/liugj/lumen-xunsearch)
 
 Xunsearch Driver for Laravel Scout.
 
@@ -17,21 +17,25 @@ You can install the package via composer:
 composer require liugj/lumen-xunsearch
 ```
 
-You must add the Scout service provider and the package service provider in your `app.php` config:
+You must add the Scout service provider and the package service provider in your `bootstrap/app.php` line 80 config:
 
 ```php
-'providers' => [
-	Liugj\Xunsearch\XunsearchServiceProvider::class,
-],
+$app->register(Liugj\Xunsearch\XunsearchServiceProvider::class);
 ```
 
 
 ## Configuration 
 
-Publish the config file into your project by running:
+Publish the config file into your project by edit `config/scout.php` line 62:
 
 ```bash
-php artisan vendor:publish --provider="Nicolasliu\Xunsearch\XunsearchServiceProvider"
+    'xunsearch' => [
+        'index'  => env('XUNSEARCH_INDEX_HOST', ''),
+        'search' => env('XUNSEARCH_SEARCH_HOST', ''),
+        'schema' => [
+           'brand_index'=>app()->basePath()  .'/'. env('XUNSEARCH_SCHEMA_BRAND'),
+        ]
+    ],
 ```
 
 Add Xunsearch settings into `.env` file:
@@ -53,7 +57,7 @@ Now you can use Laravel Scout as described in the [official documentation](https
 
 ## Credits
 
-- [NicolasLiu](https://github.com/nicolasliu)
+- [liugj](https://github.com/liugj)
 - [All Contributors](../../contributors)
 
 ## License

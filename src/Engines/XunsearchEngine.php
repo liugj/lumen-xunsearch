@@ -28,7 +28,7 @@ class XunsearchEngine extends Engine
      * Update the given model in the index.
      *
      * @param  \Illuminate\Database\Eloquent\Collection  $models
-     * @throws \AlgoliaSearch\AlgoliaException
+     * @throws \XSException
      * @return void
      */
     public function update($models)
@@ -119,7 +119,6 @@ class XunsearchEngine extends Engine
                 $options
             );
         }
-
         $search->setFuzzy()->setQuery($builder->query);
         collect($builder->wheres)->map(function ($value, $key) use ($search) {
             $search->addRange($key, $value, $value);
@@ -131,7 +130,8 @@ class XunsearchEngine extends Engine
             $offset = $perPage * $options['page'];
         }
 
-        return $search->setLimit($perPage, $offset)->search();
+        $hits =  $search->setLimit($perPage, $offset)->search();
+        return ['hits'=>$hits, 'nbHits'=>$search->lastCount];
     }
 
     /**
@@ -170,7 +170,7 @@ class XunsearchEngine extends Engine
         if (count($results['hits']) === 0) {
             return Collection::make();
         }
-
+        /*
         $keys = collect($results['hits'])
                         ->pluck($model->getKeyName())->values()->all();
 
@@ -185,6 +185,10 @@ class XunsearchEngine extends Engine
             if (isset($models[$key])) {
                 return $models[$key];
             }
+        })->filter();
+        */
+        return collect($results['hits'])->map(function ($hit, $key) use ($model) {
+                return $hit->getFields();
         })->filter();
     }
 
