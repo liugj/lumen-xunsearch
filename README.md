@@ -1,7 +1,7 @@
 Lumen XunSearch
 ==============
 
-Xunsearch Driver for Laravel Scout.
+Xunsearch Engine for Laravel Scout.
 
 ## Installation
 
@@ -43,6 +43,69 @@ XUNSEARCH_SCHEMA_BRAND=config/brand.ini
 ## Usage
 
 Now you can use Laravel Scout as described in the [official documentation](https://laravel.com/docs/5.3/scout).
+
+### Where Clauses
+
+This enginge allows you to add more advanced "where" clauses.
+
+* addRange 
+
+```
+   $users = App\User::search('Star Trek')->where('age', \Liugj\Xunsearch\Operators\RangeOperator(30,50))->get();
+```
+
+* addCollapse
+
+```
+   $users = App\User::search('Star Trek')->where('city', \Liugj\Xunsearch\Operators\CollapseOperator($num = 10))->get();
+```
+
+* setFuzzy
+
+```
+   $users = App\Users::search('Star Trek')->where('**', \Liugj\Xunsearch\Operators\FuzzyOperator($fuzzy = false))->get();
+```
+
+* addWeight
+
+```
+   $users = App\User::search('Star Trek')->where('country', \Liugj\Xunsearch\Operators\WeightOperator('US'))->get();
+```
+
+### Configuring Searchable Data
+
+By default, the entire toArray form of a given model will be persisted to its search index. If you would like to customize the data that is synchronized to the search index, you may override the  toSearchableArray method on the model:
+
+
+```
+<?php
+
+namespace App;
+
+use Liugj\Xunsearch\Searchable;
+use Illuminate\Database\Eloquent\Model;
+
+class Post extends Model
+{
+    use Searchable;
+
+    /**
+     * Get the indexable data array for the model.
+     *
+     * @return array
+     */
+    public function toSearchableArray()
+    {
+        $array = $this->toArray();
+
+        // Customize array...
+
+        return $array;
+    }
+}
+
+```
+
 
 ##Links
 
