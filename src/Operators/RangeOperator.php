@@ -25,4 +25,9 @@ class RangeOperator extends BasicOperator
     {
         return $this->to;
     }
+    
+    public function __toString()
+    {
+        return $this->from.'='.$this->to;
+    }
 }

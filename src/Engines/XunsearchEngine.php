@@ -133,7 +133,7 @@ class XunsearchEngine extends Engine
         }
         $search->setFuzzy()->setQuery($builder->query);
         collect($builder->wheres)->map(function ($value, $key) use ($search) {
-            if ($value instanceof Operators\RangeOperator) {
+            if ($value instanceof \Liugj\Xunsearch\Operators\RangeOperator) {
                 $search->addRange($key, $value->getFrom(), $value->getTo());
             } else {
                 $search->addRange($key, $value, $value);
