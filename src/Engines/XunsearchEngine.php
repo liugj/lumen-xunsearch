@@ -131,10 +131,16 @@ class XunsearchEngine extends Engine
                 $options
             );
         }
+
         $search->setFuzzy()->setQuery($builder->query);
         collect($builder->wheres)->map(function ($value, $key) use ($search) {
             $search->addRange($key, $value, $value);
         });
+
+        collect($builder->orders)->map(function ($value, $key) use ($search) {
+            $search->setSort($key, $value == 'desc');
+        });
+
 
         $offset = 0;
         $perPage = $options['hitsPerPage'];
