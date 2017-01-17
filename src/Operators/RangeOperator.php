@@ -2,9 +2,9 @@
 
 namespace Liugj\Xunsearch\Operators;
 
-use Liugj\Xunsearch\BasicOperator;
+use Liugj\Xunsearch\Operator;
 
-class RangeOperator extends BasicOperator
+class RangeOperator extends Operator
 {
     private $from = null;
     

@@ -22,8 +22,8 @@ class XunsearchClient
     protected $searchHost = null;
 
     /**
-     * options 
-     * 
+     * options
+     *
      * @var mixed
      * @access protected
      */
