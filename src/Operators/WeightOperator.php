@@ -2,8 +2,6 @@
 
 namespace Liugj\Xunsearch\Operators;
 
-use Liugj\Xunsearch\Operator;
-
 class WeightOperator extends Operator
 {
     private $weight;

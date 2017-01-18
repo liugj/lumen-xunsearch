@@ -163,7 +163,7 @@ class XunsearchEngine extends Engine
 
         $facets = collect($builder->wheres)->map(function ($value, $key) use ($search) {
             if ($value instanceof \Liugj\Xunsearch\Operators\FacetsOperator) {
-                return collect($value->getFields())->mapWithKeys(function($field) use($search) {
+                return collect($value->getFields())->mapWithKeys(function ($field) use ($search) {
                     return [$field =>$search->getFacets($field)];
                 });
             }

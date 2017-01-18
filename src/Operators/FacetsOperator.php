@@ -2,8 +2,6 @@
 
 namespace Liugj\Xunsearch\Operators;
 
-use Liugj\Xunsearch\Operator;
-
 class RangeOperator extends Operator
 {
     private $fields;

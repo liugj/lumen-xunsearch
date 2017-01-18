@@ -29,5 +29,4 @@ trait Searchable
                 ->onQueue($models->first()->syncWithSearchUsingQueue())
                 ->onConnection($models->first()->syncWithSearchUsing()));
     }
-
 }

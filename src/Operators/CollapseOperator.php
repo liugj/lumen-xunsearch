@@ -2,8 +2,6 @@
 
 namespace Liugj\Xunsearch\Operators;
 
-use Liugj\Xunsearch\Operator;
-
 class CollapseOperator extends Operator
 {
     private $num;
