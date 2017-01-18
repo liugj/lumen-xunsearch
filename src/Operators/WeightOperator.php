@@ -6,9 +6,9 @@ use Liugj\Xunsearch\Operator;
 
 class WeightOperator extends Operator
 {
-    private $weight   = '';
+    private $weight;
 
-    public function __construct($weight)
+    public function __construct(string $weight = '')
     {
         $this->weight = $weight;
     }

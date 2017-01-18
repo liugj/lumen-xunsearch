@@ -6,15 +6,15 @@ use Liugj\Xunsearch\Operator;
 
 class CollapseOperator extends Operator
 {
-    private $num   = 1;
+    private $num;
 
-    public function __construct($num)
+    public function __construct(int $num = 1)
     {
         $this->num = $num;
     }
 
     public function __toString()
     {
-        return $this->num;
+        return (string)$this->num;
     }
 }

@@ -139,9 +139,11 @@ class XunsearchEngine extends Engine
             } elseif ($value instanceof \Liugj\Xunsearch\Operators\WeightOperator) {
                 $search->addWeight($key, $value);
             } elseif ($value instanceof \Liugj\Xunsearch\Operators\CollapseOperator) {
-                $search->addCollapse($key, $value);
+                $search->setCollapse($key, (int)sprintf('%s', $value));
             } elseif ($value instanceof \Liugj\Xunsearch\Operators\FuzzyOperator) {
                 $search->setFuzzy($value);
+            } elseif ($valud instanceof \Liugj\Xunsearch\Operators\FacetsOperator) {
+                $search->setFacets($value->getFields(), $value->getExact());
             } else {
                 $search->addRange($key, $value, $value);
             }
@@ -157,10 +159,17 @@ class XunsearchEngine extends Engine
         if (!empty($options['page'])) {
             $offset = $perPage * $options['page'];
         }
-
         $hits =  $search->setLimit($perPage, $offset)->search();
 
-        return ['hits'=>$hits, 'nbHits'=>$search->lastCount];
+        $facets = collect($builder->wheres)->map(function ($value, $key) use ($search) {
+            if ($value instanceof \Liugj\Xunsearch\Operators\FacetsOperator) {
+                return collect($value->getFields())->mapWithKeys(function($field) use($search) {
+                    return [$field =>$search->getFacets($field)];
+                });
+            }
+        })->collapse();
+
+        return ['hits'=>$hits, 'nbHits'=>$search->lastCount, 'facets'=>$facets];
     }
 
     /**

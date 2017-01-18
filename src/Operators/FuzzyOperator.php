@@ -6,15 +6,15 @@ use Liugj\Xunsearch\Operator;
 
 class FuzzyOperator extends Operator
 {
-    private $fuzzy   = true;
+    private $fuzzy;
 
-    public function __construct($fuzzy)
+    public function __construct(bool $fuzzy = true)
     {
         $this->fuzzy = $fuzzy;
     }
 
     public function __toString()
     {
-        return $this->fuzzy ?1 :0;
+        return (string)$this->fuzzy;
     }
 }
