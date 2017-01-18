@@ -2,7 +2,7 @@
 
 namespace Liugj\Xunsearch;
 
-abstract class BasicOperator
+abstract class Operator
 {
 
 }
