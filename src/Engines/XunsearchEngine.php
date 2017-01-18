@@ -142,7 +142,7 @@ class XunsearchEngine extends Engine
                 $search->setCollapse($key, (int)sprintf('%s', $value));
             } elseif ($value instanceof \Liugj\Xunsearch\Operators\FuzzyOperator) {
                 $search->setFuzzy($value);
-            } elseif ($valud instanceof \Liugj\Xunsearch\Operators\FacetsOperator) {
+            } elseif ($value instanceof \Liugj\Xunsearch\Operators\FacetsOperator) {
                 $search->setFacets($value->getFields(), $value->getExact());
             } else {
                 $search->addRange($key, $value, $value);
