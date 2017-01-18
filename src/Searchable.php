@@ -4,6 +4,7 @@ namespace Liugj\Xunsearch;
 use Laravel\Scout\Searchable as ScoutSearchable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as BaseCollection;
+use Liugj\Xunsearch\Jobs\MakeSearchable;
 
 trait Searchable
 {
