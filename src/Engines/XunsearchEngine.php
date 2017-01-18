@@ -49,7 +49,7 @@ class XunsearchEngine extends Engine
             }
 
             $doc = new \XSDocument();
-            $doc->setFields(array_merge(['id' => $model->getKey()], $array));
+            $doc->setFields(array_merge([$model->getKeyName() => $model->getKey()], $array));
             $index->update($doc);
         });
 
@@ -132,10 +132,16 @@ class XunsearchEngine extends Engine
             );
         }
 
-        $search->setFuzzy()->setQuery($builder->query);
+        $search->setQuery($builder->query);
         collect($builder->wheres)->map(function ($value, $key) use ($search) {
             if ($value instanceof \Liugj\Xunsearch\Operators\RangeOperator) {
                 $search->addRange($key, $value->getFrom(), $value->getTo());
+            } elseif ($value instanceof \Liugj\Xunsearch\Operators\WeightOperator) {
+                $search->addWeight($key, $value);
+            } elseif ($value instanceof \Liugj\Xunsearch\Operators\CollapseOperator) {
+                $search->addCollapse($key, $value);
+            } elseif ($value instanceof \Liugj\Xunsearch\Operators\FuzzyOperator) {
+                $search->setFuzzy($value);
             } else {
                 $search->addRange($key, $value, $value);
             }
