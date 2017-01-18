@@ -1,6 +1,6 @@
 <?php
 
-namespace Liugj\Xunsearch;
+namespace Liugj\Xunsearch\Operators;
 
 abstract class Operator
 {
