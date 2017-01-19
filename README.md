@@ -52,28 +52,28 @@ This enginge allows you to add more advanced "where" clauses.
 
 ```
    $users = App\User::search('Star Trek')
-            ->where('age', \Liugj\Xunsearch\Operators\RangeOperator(30,50))->get();
+            ->where('age', new \Liugj\Xunsearch\Operators\RangeOperator(30,50))->get();
 ```
 
-* addCollapse
+* setCollapse
 
 ```
    $users = App\User::search('Star Trek')
-            ->where('city', \Liugj\Xunsearch\Operators\CollapseOperator($num = 10))->get();
+            ->where('city', new \Liugj\Xunsearch\Operators\CollapseOperator($num = 10))->get();
 ```
 
 * setFuzzy
 
 ```
    $users = App\Users::search('Star Trek')
-           ->where('**', \Liugj\Xunsearch\Operators\FuzzyOperator($fuzzy = false))->get();
+           ->where('**', new \Liugj\Xunsearch\Operators\FuzzyOperator($fuzzy = false))->get();
 ```
 
 * addWeight
 
 ```
    $users = App\User::search('Star Trek')
-   ->where('country', \Liugj\Xunsearch\Operators\WeightOperator('US'))->get();
+   ->where('country', new \Liugj\Xunsearch\Operators\WeightOperator('US'))->get();
 ```
 
 ### Configuring Searchable Data
