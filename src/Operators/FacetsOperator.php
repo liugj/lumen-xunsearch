@@ -2,7 +2,7 @@
 
 namespace Liugj\Xunsearch\Operators;
 
-class RangeOperator extends Operator
+class FacetsOperator extends Operator
 {
     private $fields;
     
