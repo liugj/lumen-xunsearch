@@ -18,7 +18,8 @@ class XunsearchEngine extends Engine
     protected $xunsearch;
     
     /**
-     * facets
+     * decide if including the facets` results in
+     * the final results
      * 
      */    
     private $facets;
