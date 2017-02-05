@@ -208,7 +208,7 @@ class XunsearchEngine extends Engine
      */
     public function map($results, $model)
     {
-        if (count($results['hits']) === 0) {
+        if (count($results['hits']) === 0 && count($results['facets']) === 0) {
             return Collection::make();
         }
         /*
@@ -228,9 +228,11 @@ class XunsearchEngine extends Engine
             }
         })->filter();
         */
-        return collect($results['hits'])->map(function ($hit, $key) use ($model) {
+        $hits = collect($results['hits'])->map(function ($hit, $key) use ($model) {
                 return $hit->getFields();
         })->filter();
+
+        return collect($results['facets'])->isEmpty() ? ['hits' => $hits] : ['hits' => $hits, 'facets' => $results['facets']];
     }
 
     /**
