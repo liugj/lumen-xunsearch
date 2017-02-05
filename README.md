@@ -73,7 +73,7 @@ This enginge allows you to add more advanced "where" clauses.
 
 ```
    $users = App\Users::search('Star Trek')
-            ->where('***', new Liugj\Xunsearch\Operators\FacetsOperator(array('age','city')))->get();
+            ->where('***', new \Liugj\Xunsearch\Operators\FacetsOperator(array('age','city')))->get();
 ```
 
 * addWeight
