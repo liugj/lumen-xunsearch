@@ -69,6 +69,13 @@ This enginge allows you to add more advanced "where" clauses.
            ->where('**', new \Liugj\Xunsearch\Operators\FuzzyOperator($fuzzy = false))->get();
 ```
 
+* setFacets
+
+```
+   $users = App\Users::search('Star Trek')
+            ->where('***', new Liugj\Xunsearch\Operators\FacetsOperator(array('age','city')))->get();
+```
+
 * addWeight
 
 ```

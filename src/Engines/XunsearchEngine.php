@@ -16,6 +16,12 @@ class XunsearchEngine extends Engine
      */
 
     protected $xunsearch;
+    
+    /**
+     * facets
+     * 
+     */    
+    private $facets;
 
     /**
      * Create a new engine instance.
@@ -27,6 +33,7 @@ class XunsearchEngine extends Engine
     public function __construct(Xunsearch $xunsearch)
     {
         $this->xunsearch = $xunsearch;
+        $this->facets = false;
     }
     /**
      * Update the given model in the index.
@@ -143,6 +150,7 @@ class XunsearchEngine extends Engine
             } elseif ($value instanceof \Liugj\Xunsearch\Operators\FuzzyOperator) {
                 $search->setFuzzy($value);
             } elseif ($value instanceof \Liugj\Xunsearch\Operators\FacetsOperator) {
+                $this->facets = true;
                 $search->setFacets($value->getFields(), $value->getExact());
             } else {
                 $search->addRange($key, $value, $value);
@@ -208,8 +216,8 @@ class XunsearchEngine extends Engine
      */
     public function map($results, $model)
     {
-        if (count($results['hits']) === 0 && count($results['facets']) === 0) {
-            return Collection::make();
+        if (count($results['hits']) === 0 && !$this->facets) {
+            return ['hits' => Collection::make()];
         }
         /*
         $keys = collect($results['hits'])
@@ -232,7 +240,7 @@ class XunsearchEngine extends Engine
                 return $hit->getFields();
         })->filter();
 
-        return collect($results['facets'])->isEmpty() ? ['hits' => $hits] : ['hits' => $hits, 'facets' => $results['facets']];
+        return $this->facets ? ['hits' => $hits, 'facets' => $results['facets']] : ['hits' => $hits];
     }
 
     /**
