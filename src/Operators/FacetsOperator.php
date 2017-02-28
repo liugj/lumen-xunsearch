@@ -1,11 +1,15 @@
 <?php
 
+/*
+ * psr2
+ */
+
 namespace Liugj\Xunsearch\Operators;
 
 class FacetsOperator extends Operator
 {
     private $fields;
-    
+
     private $exact;
 
     public function __construct(array $fields, bool $exact = false)
@@ -23,7 +27,7 @@ class FacetsOperator extends Operator
     {
         return $this->exact;
     }
-    
+
     public function __toString()
     {
         return '';

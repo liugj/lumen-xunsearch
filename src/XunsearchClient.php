@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * psr2
+ */
+
 namespace Liugj\Xunsearch;
 
 use Illuminate\Support\Facades\Cache;
@@ -6,57 +11,52 @@ use Illuminate\Support\Facades\Cache;
 class XunsearchClient
 {
     /**
-     * indexHost
+     * indexHost.
      *
      * @var string
-     * @access protected
      */
     protected $indexHost = null;
 
     /**
-     * searchHost
+     * searchHost.
      *
      * @var string
-     * @access protected
      */
     protected $searchHost = null;
 
     /**
-     * options
+     * options.
      *
      * @var mixed
-     * @access protected
      */
     protected $options = [];
 
     /**
-     * __construct
+     * __construct.
      *
      * @param mixed $indexHost
      * @param mixed $searchHost
-     *
-     * @access public
      *
      * @return mixed
      */
     public function __construct($indexHost, $searchHost, $options = [])
     {
-        $this->indexHost  = $indexHost;
+        $this->indexHost = $indexHost;
         $this->searchHost = $searchHost;
-        $this->options    = $options;
+        $this->options = $options;
     }
+
     /**
-     * 初始化索引参数 initIndex
+     * 初始化索引参数 initIndex.
      *
      * @param string $indexName
-     *
-     * @access public
      *
      * @return \XSIndex
      */
     public function initIndex(string $indexName)
     {
-        $config  = $this->loadConfig($indexName);
+        $config = $this->loadConfig($indexName);
+
         return  (new \XS($config))->getIndex();
     }
 
@@ -65,19 +65,18 @@ class XunsearchClient
      *
      * @param string $searchName
      *
-     * @access public
-     *
      * @return XSSearch 搜索操作对象
      */
     public function initSearch(string $searchName)
     {
-        $config  = $this->loadConfig($searchName);
+        $config = $this->loadConfig($searchName);
+
         return  (new \XS($config))->getSearch();
     }
 
     /**
      * 解析INI配置文件
-     * 由于 PHP 自带的 parse_ini_file 存在一些不兼容，故自行简易实现
+     * 由于 PHP 自带的 parse_ini_file 存在一些不兼容，故自行简易实现.
      *
      * @param string $data 文件内容
      *
@@ -85,7 +84,7 @@ class XunsearchClient
      */
     private function parseIniData($data)
     {
-        $ret = array();
+        $ret = [];
         $cur = &$ret;
         $lines = explode("\n", $data);
         foreach ($lines as $line) {
@@ -98,7 +97,7 @@ class XunsearchClient
             }
             if ($line[0] === '[' && substr($line, -1, 1) === ']') {
                 $sec = substr($line, 1, -1);
-                $ret[$sec] = array();
+                $ret[$sec] = [];
                 $cur = &$ret[$sec];
                 continue;
             }
@@ -114,18 +113,16 @@ class XunsearchClient
     }
 
     /**
-     * 加载项目配置文件
+     * 加载项目配置文件.
      *
      * @param string $schema 索引名称
-     *
-     * @access private
      *
      * @return array
      */
     private function loadConfig($schema)
     {
         $file = $this->options['schema'][$schema];
-        $key = 'xunsearch_'. md5($file);
+        $key = 'xunsearch_'.md5($file);
         $mtime = filemtime($file);
 
         if (($data = Cache :: get($key)) !== null) {
@@ -136,13 +133,13 @@ class XunsearchClient
 
         if (!$data) {
             $content = file_get_contents($file);
-            $data['config'] =  $this->parseIniData($content);
-            $data['mtime']  = $mtime;
+            $data['config'] = $this->parseIniData($content);
+            $data['mtime'] = $mtime;
             Cache :: put($key, $data, 86400);
         }
 
         $data['config']['server.search'] = $this->searchHost;
-        $data['config']['server.index']  = $this->indexHost;
+        $data['config']['server.index'] = $this->indexHost;
         $data['config']['project.default_charset'] = 'utf8';
         $data['config']['project.name'] = $schema;
 

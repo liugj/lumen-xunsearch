@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * psr2
+ */
+
 namespace Liugj\Xunsearch\Operators;
 
 class FuzzyOperator extends Operator
@@ -13,6 +17,6 @@ class FuzzyOperator extends Operator
 
     public function __toString()
     {
-        return (string)$this->fuzzy;
+        return (string) $this->fuzzy;
     }
 }

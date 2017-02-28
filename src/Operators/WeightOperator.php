@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * psr2
+ */
+
 namespace Liugj\Xunsearch\Operators;
 
 class WeightOperator extends Operator

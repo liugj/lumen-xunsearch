@@ -1,9 +1,13 @@
 <?php
+
+/*
+ * psr2
+ */
+
 namespace Liugj\Xunsearch\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Collection;
 
 class MakeSearchable implements ShouldQueue
 {
@@ -19,7 +23,8 @@ class MakeSearchable implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection  $models
+     * @param \Illuminate\Database\Eloquent\Collection $models
+     *
      * @return void
      */
     public function __construct($models)

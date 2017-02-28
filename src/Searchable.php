@@ -1,18 +1,23 @@
 <?php
+
+/*
+ * psr2
+ */
+
 namespace Liugj\Xunsearch;
 
 use Laravel\Scout\Searchable as ScoutSearchable;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Collection as BaseCollection;
 use Liugj\Xunsearch\Jobs\MakeSearchable;
 
 trait Searchable
 {
     use  ScoutSearchable;
+
     /**
      * Dispatch the job to make the given models searchable.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection  $models
+     * @param \Illuminate\Database\Eloquent\Collection $models
+     *
      * @return void
      */
     public function queueMakeSearchable($models)
@@ -21,7 +26,7 @@ trait Searchable
             return;
         }
 
-        if (! config('scout.queue')) {
+        if (!config('scout.queue')) {
             return $models->first()->searchableUsing()->update($models);
         }
 

@@ -1,11 +1,15 @@
 <?php
 
+/*
+ * psr2
+ */
+
 namespace Liugj\Xunsearch\Operators;
 
 class RangeOperator extends Operator
 {
     private $from;
-    
+
     private $to;
 
     public function __construct($from = null, $to = null)
@@ -23,7 +27,7 @@ class RangeOperator extends Operator
     {
         return $this->to;
     }
-    
+
     public function __toString()
     {
         return $this->from.'='.$this->to;

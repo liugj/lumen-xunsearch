@@ -1,10 +1,14 @@
 <?php
 
+/*
+ * psr2
+ */
+
 namespace Liugj\Xunsearch\Engines;
 
+use Illuminate\Database\Eloquent\Collection;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine as Engine;
-use Illuminate\Database\Eloquent\Collection;
 use Liugj\Xunsearch\XunsearchClient as Xunsearch;
 
 class XunsearchEngine extends Engine
@@ -14,9 +18,8 @@ class XunsearchEngine extends Engine
      *
      * @var Liugj\Xunsearch\XunSearchClient
      */
-
     protected $xunsearch;
-    
+
     /**
      * Create a new engine instance.
      *
@@ -28,10 +31,11 @@ class XunsearchEngine extends Engine
     {
         $this->xunsearch = $xunsearch;
     }
+
     /**
      * Update the given model in the index.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection  $models
+     * @param \Illuminate\Database\Eloquent\Collection $models
      *
      * @throws \XSException
      *
@@ -59,7 +63,7 @@ class XunsearchEngine extends Engine
     /**
      * Remove the given model from the index.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection  $models
+     * @param \Illuminate\Database\Eloquent\Collection $models
      *
      * @throws \XSException
      *
@@ -70,7 +74,7 @@ class XunsearchEngine extends Engine
         $index = $this->xunsearch->initIndex($models->first()->searchableAs());
 
         $models->map(function ($model) use ($index) {
-                $index->del($model->getKey());
+            $index->del($model->getKey());
         });
 
         $index->flushIndex();
@@ -79,7 +83,7 @@ class XunsearchEngine extends Engine
     /**
      * Perform the given search on the engine.
      *
-     * @param  \Laravel\Scout\Builder  $builder
+     * @param \Laravel\Scout\Builder $builder
      *
      * @return mixed
      */
@@ -87,16 +91,16 @@ class XunsearchEngine extends Engine
     {
         return $this->performSearch($builder, array_filter([
             'numericFilters' => $this->filters($builder),
-            'hitsPerPage' => $builder->limit,
+            'hitsPerPage'    => $builder->limit,
         ]));
     }
 
     /**
      * Perform the given search on the engine.
      *
-     * @param  \Laravel\Scout\Builder  $builder
-     * @param  int                     $perPage
-     * @param  int                     $page
+     * @param \Laravel\Scout\Builder $builder
+     * @param int                    $perPage
+     * @param int                    $page
      *
      * @return mixed
      */
@@ -104,16 +108,16 @@ class XunsearchEngine extends Engine
     {
         return $this->performSearch($builder, [
             'numericFilters' => $this->filters($builder),
-            'hitsPerPage' => $perPage,
-            'page' => $page - 1,
+            'hitsPerPage'    => $perPage,
+            'page'           => $page - 1,
         ]);
     }
 
     /**
      * Perform the given search on the engine.
      *
-     * @param  \Laravel\Scout\Builder  $builder
-     * @param  array                   $options
+     * @param \Laravel\Scout\Builder $builder
+     * @param array                  $options
      *
      * @return mixed
      */
@@ -139,7 +143,7 @@ class XunsearchEngine extends Engine
             } elseif ($value instanceof \Liugj\Xunsearch\Operators\WeightOperator) {
                 $search->addWeight($key, $value);
             } elseif ($value instanceof \Liugj\Xunsearch\Operators\CollapseOperator) {
-                $search->setCollapse($key, (int)sprintf('%s', $value));
+                $search->setCollapse($key, (int) sprintf('%s', $value));
             } elseif ($value instanceof \Liugj\Xunsearch\Operators\FuzzyOperator) {
                 $search->setFuzzy($value);
             } elseif ($value instanceof \Liugj\Xunsearch\Operators\FacetsOperator) {
@@ -153,13 +157,12 @@ class XunsearchEngine extends Engine
             $search->setSort($key, $value == 'desc');
         });
 
-
         $offset = 0;
         $perPage = $options['hitsPerPage'];
         if (!empty($options['page'])) {
             $offset = $perPage * $options['page'];
         }
-        $hits =  $search->setLimit($perPage, $offset)->search();
+        $hits = $search->setLimit($perPage, $offset)->search();
 
         $facets = collect($builder->wheres)->map(function ($value, $key) use ($search) {
             if ($value instanceof \Liugj\Xunsearch\Operators\FacetsOperator) {
@@ -175,7 +178,7 @@ class XunsearchEngine extends Engine
     /**
      * Get the filter array for the query.
      *
-     * @param  \Laravel\Scout\Builder  $builder
+     * @param \Laravel\Scout\Builder $builder
      *
      * @return array
      */
@@ -189,7 +192,7 @@ class XunsearchEngine extends Engine
     /**
      * Pluck and return the primary keys of the given results.
      *
-     * @param  mixed  $results
+     * @param mixed $results
      *
      * @return \Illuminate\Support\Collection
      */
@@ -201,8 +204,8 @@ class XunsearchEngine extends Engine
     /**
      * Map the given results to instances of the given model.
      *
-     * @param  mixed                                $results
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param mixed                               $results
+     * @param \Illuminate\Database\Eloquent\Model $model
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
@@ -229,14 +232,14 @@ class XunsearchEngine extends Engine
         })->filter();
         */
         return collect($results['hits'])->map(function ($hit, $key) use ($model) {
-                return $hit->getFields();
+            return $hit->getFields();
         })->filter();
     }
 
     /**
      * Get the total count from a raw result returned by the engine.
      *
-     * @param  mixed  $results
+     * @param mixed $results
      *
      * @return int
      */

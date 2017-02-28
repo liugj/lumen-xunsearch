@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * psr2
+ */
+
 namespace Liugj\Xunsearch\Operators;
 
 class CollapseOperator extends Operator
@@ -13,6 +17,6 @@ class CollapseOperator extends Operator
 
     public function __toString()
     {
-        return (string)$this->num;
+        return (string) $this->num;
     }
 }

@@ -1,10 +1,15 @@
 <?php
+
+/*
+ * psr2
+ */
+
 namespace Liugj\Xunsearch;
 
 use Illuminate\Support\ServiceProvider;
-use Laravel\Scout\EngineManager;
 use Laravel\Scout\Console\FlushCommand;
 use Laravel\Scout\Console\ImportCommand;
+use Laravel\Scout\EngineManager;
 use Liugj\Xunsearch\Engines\XunsearchEngine;
 
 class XunsearchServiceProvider extends ServiceProvider
@@ -15,6 +20,7 @@ class XunsearchServiceProvider extends ServiceProvider
      * @var bool
      */
     protected $defer = true;
+
     /**
      * Bootstrap the application services.
      *
@@ -24,13 +30,13 @@ class XunsearchServiceProvider extends ServiceProvider
     {
         $this->app->configure('scout');
         $this->app->singleton(EngineManager::class, function ($app) {
-                return (new EngineManager($app))->extend('xunsearch', function ($app) {
-                        return new XunsearchEngine(new XunsearchClient(
+            return (new EngineManager($app))->extend('xunsearch', function ($app) {
+                return new XunsearchEngine(new XunsearchClient(
                             $app['config']['scout.xunsearch.index'],
                             $app['config']['scout.xunsearch.search'],
                             ['schema' => $app['config']['scout.xunsearch.schema']]
                         ));
-                });
+            });
         });
 
         if ($this->app->runningInConsole()) {
@@ -40,6 +46,7 @@ class XunsearchServiceProvider extends ServiceProvider
             ]);
         }
     }
+
     /**
      * Get the services provided by the provider.
      *
