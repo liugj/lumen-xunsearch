@@ -152,11 +152,19 @@ class XunsearchEngine extends Engine
                 $search->addRange($key, $value, $value);
             }
         });
-
+        
+        /*
         collect($builder->orders)->map(function ($value, $key) use ($search) {
             $search->setSort($key, $value == 'desc');
         });
-
+        */
+        if(!empty($builder->orders)) {
+			while (list($key, $val) = each($builder->orders))
+			{
+				$search->setSort($val['column'], $val['direction'] == 'desc' ? false : true);
+			}
+		}
+        
         $offset = 0;
         $perPage = $options['hitsPerPage'];
         if (!empty($options['page'])) {
