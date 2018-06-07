@@ -768,6 +768,7 @@ class XSSearch extends XSServer
                 break;
             } else {
                 $msg = 'Unexpected respond in search {CMD:'.$res->cmd.', ARG:'.$res->arg.'}';
+
                 throw new XSException($msg);
             }
         }
@@ -828,6 +829,7 @@ class XSSearch extends XSServer
 
         // query from log_db
         $this->xs->setScheme(XSFieldScheme::logger());
+
         try {
             $this->setDb(self::LOG_DB)->setLimit($limit);
             if ($type !== 'lastnum' && $type !== 'currnum') {
@@ -874,6 +876,7 @@ class XSSearch extends XSServer
         // Search the log database
         $op = $this->_defaultOp;
         $this->xs->setScheme(XSFieldScheme::logger());
+
         try {
             $result = $this->setDb(self::LOG_DB)->setFuzzy()->setLimit($limit + 1)->search($query);
             foreach ($result as $doc) /* @var $doc XSDocument */ {
@@ -929,6 +932,7 @@ class XSSearch extends XSServer
                     break;
                 } else {
                     $msg = 'Unexpected respond in search {CMD:'.$res->cmd.', ARG:'.$res->arg.'}';
+
                     throw new XSException($msg);
                 }
             }
@@ -1472,7 +1476,7 @@ class XSSearch extends XSServer
         } else {
             $word1 = 0 - $word1;
             if ($word2 != 0) {
-                ++$word1;
+                $word1++;
             }
             $word2 = 0 - $word2;
             $word1 &= 0x03ffffff;

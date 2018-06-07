@@ -117,6 +117,7 @@ class XSDocument implements ArrayAccess, IteratorAggregate
                 return $this->_meta[$name];
             }
         }
+
         throw new XSException('Call to undefined method `'.get_class($this).'::'.$name.'()\'');
     }
 

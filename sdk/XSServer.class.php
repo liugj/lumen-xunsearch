@@ -415,6 +415,7 @@ class XSServer extends XSComponent
             $reason = $meta['timed_out'] ? 'timeout' : ($meta['eof'] ? 'closed' : 'unknown');
             $msg = 'Failed to send the data to server completely ';
             $msg .= '(SIZE:'.($size - $len).'/'.$size.', REASON:'.$reason.')';
+
             throw new XSException($msg);
         }
     }
@@ -454,6 +455,7 @@ class XSServer extends XSComponent
         $reason = $meta['timed_out'] ? 'timeout' : ($meta['eof'] ? 'closed' : 'unknown');
         $msg = 'Failed to recv the data from server completely ';
         $msg .= '(SIZE:'.($size - $len).'/'.$size.', REASON:'.$reason.')';
+
         throw new XSException($msg);
     }
 

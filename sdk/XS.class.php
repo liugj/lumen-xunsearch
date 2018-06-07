@@ -155,6 +155,7 @@ class XSComponent
         // throw exception
         $msg = method_exists($this, 'set'.$name) ? 'Write-only' : 'Undefined';
         $msg .= ' property: '.get_class($this).'::$'.$name;
+
         throw new XSException($msg);
     }
 
@@ -176,6 +177,7 @@ class XSComponent
         // throw exception
         $msg = method_exists($this, 'get'.$name) ? 'Read-only' : 'Undefined';
         $msg .= ' property: '.get_class($this).'::$'.$name;
+
         throw new XSException($msg);
     }
 
@@ -247,44 +249,44 @@ class XS extends XSComponent
      */
     private static $_lastXS;
 
-     /**
-      * 构造函数
-      * 特别说明一个小技巧, 参数 $file 可以直接是配置文件的内容, 还可以是仅仅是文件名,
-      * 如果只是文件名会自动查找 XS_LIB_ROOT/../app/$file.ini.
-      *
-      * @param string $file 要加载的项目配置文件
-      * public function __construct($file)
-      * {
-      * 	if (strlen($file) < 255 && !is_file($file)) {
-      * 		$appRoot = getenv('XS_APP_ROOT');
-      * 		if ($appRoot === false) {
-      * 			$appRoot = defined('XS_APP_ROOT') ? XS_APP_ROOT : XS_LIB_ROOT . '/../app';
-      * 		}
-      * 		$file2 = $appRoot . '/' . $file . '.ini';
-      * 		if (is_file($file2)) {
-      * 			$file = $file2;
-      * 		}
-      * 	}
-      * 	$this->loadIniFile($file);
-      * 	self::$_lastXS = $this;
-      * }
-      */
-     public function __construct($config)
-     {
-         $this->_config = $config;
-         if ($this->_config === false) {
-             throw new XSException('Failed to parse project config array.');
-         }
-         $scheme = new XSFieldScheme();
-         foreach ($this->_config as $key => $value) {
-             if (is_array($value)) {
-                 $scheme->addField($key, $value);
-             }
-         }
-         $scheme->checkValid(true);
-         $this->_scheme = $this->_bindScheme = $scheme;
-         self::$_lastXS = $this;
-     }
+    /**
+     * 构造函数
+     * 特别说明一个小技巧, 参数 $file 可以直接是配置文件的内容, 还可以是仅仅是文件名,
+     * 如果只是文件名会自动查找 XS_LIB_ROOT/../app/$file.ini.
+     *
+     * @param string $file 要加载的项目配置文件
+     * public function __construct($file)
+     * {
+     * 	if (strlen($file) < 255 && !is_file($file)) {
+     * 		$appRoot = getenv('XS_APP_ROOT');
+     * 		if ($appRoot === false) {
+     * 			$appRoot = defined('XS_APP_ROOT') ? XS_APP_ROOT : XS_LIB_ROOT . '/../app';
+     * 		}
+     * 		$file2 = $appRoot . '/' . $file . '.ini';
+     * 		if (is_file($file2)) {
+     * 			$file = $file2;
+     * 		}
+     * 	}
+     * 	$this->loadIniFile($file);
+     * 	self::$_lastXS = $this;
+     * }
+     */
+    public function __construct($config)
+    {
+        $this->_config = $config;
+        if ($this->_config === false) {
+            throw new XSException('Failed to parse project config array.');
+        }
+        $scheme = new XSFieldScheme();
+        foreach ($this->_config as $key => $value) {
+            if (is_array($value)) {
+                $scheme->addField($key, $value);
+            }
+        }
+        $scheme->checkValid(true);
+        $this->_scheme = $this->_bindScheme = $scheme;
+        self::$_lastXS = $this;
+    }
 
     /**
      * 析构函数

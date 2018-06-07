@@ -501,6 +501,7 @@ class XSIndex extends XSServer
             if ($e->getCode() === XS_CMD_ERR_BUSY) {
                 return false;
             }
+
             throw $e;
         }
 
@@ -520,6 +521,7 @@ class XSIndex extends XSServer
             if ($e->getCode() === XS_CMD_ERR_BUSY || $e->getCode() === XS_CMD_ERR_RUNNING) {
                 return false;
             }
+
             throw $e;
         }
 

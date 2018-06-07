@@ -162,6 +162,7 @@ class XSFieldScheme implements IteratorAggregate
         if ($field->isSpeical()) {
             if (isset($this->_typeMap[$field->type])) {
                 $prev = $this->_typeMap[$field->type];
+
                 throw new XSException('Duplicated '.strtoupper($config['type']).' field: `'.$field->name.'\' and `'.$prev.'\'');
             }
             $this->_typeMap[$field->type] = $field->name;
